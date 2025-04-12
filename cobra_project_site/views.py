@@ -1,7 +1,7 @@
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from cobra_project_app.forms import TestForm
 from cobra_project_app.models import Test, Question, Answer
 from cobra_project_site import settings
@@ -57,6 +57,20 @@ def test_compiling(request):
     return render(request, 'test_compiling.html', {
         'test_form': test_form,
     })
+
+
+@login_required(login_url=settings.LOGIN_URL)
+def test_view(request, test_id):
+    test = get_object_or_404(Test, id=test_id)
+    return render(request, 'test.html', {'test': test})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_test(request, test_id):
+    if request.method == 'POST':
+        test = get_object_or_404(Test, id=test_id, user=request.user)
+        test.delete()
+    return redirect('home')
 
 
 def login_view(request):

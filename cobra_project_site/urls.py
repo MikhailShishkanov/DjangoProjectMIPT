@@ -23,4 +23,6 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
     path('test/new/', views.test_compiling, name='test_compiling'),
+    path('test/<int:test_id>/', views.test_view, name='test'),
+    path('test/delete/<int:test_id>/', views.delete_test, name='test_delete'),
 ]
