@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b5e9ecf-0c6d-4a77-bebf-f7adbf4938fc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/cobra_project_site/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/cobra_project_site/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="5b5e9ecf-0c6d-4a77-bebf-f7adbf4938fc" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,8 +37,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\CobraProject\cobra_project_site" />
       <recent name="D:\CobraProject\templates" />
+      <recent name="D:\CobraProject\cobra_project_site" />
       <recent name="D:\CobraProject" />
       <recent name="D:\CobraProject\cobra_project_app" />
     </key>

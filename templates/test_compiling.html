@@ -1,0 +1,311 @@
+{% extends 'base_page.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <form method="post" id="testForm">
+        {% csrf_token %}
+
+        <!-- Форма теста -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="id_name">Название теста:</label>
+                    {{ test_form.name }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Вопросы -->
+        <div id="questionsContainer">
+            <div class="question card mb-3" id="question_0">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Вопрос 1</h4>
+                    <button type="button" class="btn btn-danger btn-sm remove-question" disabled>Удалить вопрос</button>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Текст вопроса:</label>
+                        <input type="text" name="question_0_name" class="form-control" required>
+                    </div>
+
+                    <h5 class="mt-3">Ответы:</h5>
+                    <div class="answers-container">
+                        <div class="answer form-group mb-2" id="question_0_answer_0">
+                            <div class="input-group">
+                                <input type="text" name="question_0_answer_0_name" class="form-control" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="question_0_correct" value="0">
+                                        <span class="ml-2">Верный</span>
+                                    </div>
+                                </div>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-danger remove-answer disabled" disabled>×</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="answer form-group mb-2" id="question_0_answer_1">
+                            <div class="input-group">
+                                <input type="text" name="question_0_answer_1_name" class="form-control" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="question_0_correct" value="0">
+                                        <span class="ml-2">Верный</span>
+                                    </div>
+                                </div>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-danger remove-answer disabled" disabled>×</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm add-answer mt-2">Добавить ответ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mb-4">
+            <button type="button" id="addQuestion" class="btn btn-primary">Добавить вопрос</button>
+            <button type="submit" class="btn btn-success">Завершить создание теста</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Шаблон для нового вопроса
+    const newQuestionTemplate = (questionId, questionCount) => `
+        <div class="question card mb-3" id="question_${questionId}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Вопрос ${questionCount}</h4>
+                <button type="button" class="btn btn-danger btn-sm remove-question">Удалить вопрос</button>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Текст вопроса:</label>
+                    <input type="text" name="question_${questionId}_name" class="form-control" required>
+                </div>
+
+                <h5 class="mt-3">Ответы:</h5>
+                <div class="answers-container">
+                    ${newAnswerTemplate(questionId, 0)}
+                    ${newAnswerTemplate(questionId, 1)}
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm add-answer mt-2">Добавить ответ</button>
+            </div>
+        </div>
+    `;
+
+    // Шаблон для нового ответа
+    const newAnswerTemplate = (questionId, answerId, isChecked = false) => `
+        <div class="answer form-group mb-2" id="question_${questionId}_answer_${answerId}">
+            <div class="input-group">
+                <input type="text" name="question_${questionId}_answer_${answerId}_name" class="form-control" required>
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <input type="radio" name="question_${questionId}_correct" value="${answerId}" ${isChecked ? 'checked' : ''}>
+                        <span class="ml-2">Верный</span>
+                    </div>
+                </div>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-danger remove-answer ${answerId < 2 ? 'disabled' : ''}" ${answerId < 2 ? 'disabled' : ''}>×</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Добавление нового вопроса
+    document.getElementById('addQuestion').addEventListener('click', function() {
+        const questionsContainer = document.getElementById('questionsContainer');
+        const questionCount = document.querySelectorAll('.question').length;
+        const newQuestionId = questionCount;
+
+        const newQuestionElement = document.createElement('div');
+        newQuestionElement.innerHTML = newQuestionTemplate(newQuestionId, questionCount + 1);
+        questionsContainer.appendChild(newQuestionElement);
+
+        // Активируем кнопку удаления для предыдущих вопросов, если их больше 1
+        if (questionCount > 0) {
+            document.querySelectorAll('.remove-question').forEach(btn => {
+                btn.disabled = false;
+            });
+        }
+    });
+
+    // Удаление вопроса
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-question')) {
+            const question = e.target.closest('.question');
+            const questions = document.querySelectorAll('.question');
+
+            if (questions.length > 1) {
+                question.remove();
+
+                // Обновляем номера вопросов
+                document.querySelectorAll('.question').forEach((q, index) => {
+                    q.id = `question_${index}`;
+                    q.querySelector('h4').textContent = `Вопрос ${index + 1}`;
+
+                    // Обновляем name атрибуты
+                    const questionPrefix = `question_${index}`;
+                    q.querySelector('input[type="text"][name$="_name"]').name = `${questionPrefix}_name`;
+
+                    // Обновляем ответы
+                    q.querySelectorAll('.answer').forEach((a, aIndex) => {
+                        a.id = `${questionPrefix}_answer_${aIndex}`;
+                        a.querySelector('input[type="text"]').name = `${questionPrefix}_answer_${aIndex}_name`;
+                        a.querySelector('input[type="radio"]').name = `${questionPrefix}_correct`;
+                        a.querySelector('input[type="radio"]').value = aIndex;
+                    });
+                });
+
+                // Если остался 1 вопрос, деактивируем кнопку удаления
+                if (document.querySelectorAll('.question').length === 1) {
+                    document.querySelector('.remove-question').disabled = true;
+                }
+            }
+        }
+    });
+
+    // Добавление ответа
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-answer')) {
+            const question = e.target.closest('.question');
+            const questionId = question.id.split('_')[1];
+            const answersContainer = question.querySelector('.answers-container');
+            const answerCount = answersContainer.querySelectorAll('.answer').length;
+
+            const newAnswerElement = document.createElement('div');
+            newAnswerElement.innerHTML = newAnswerTemplate(questionId, answerCount);
+            answersContainer.appendChild(newAnswerElement);
+
+            // Обновляем состояние кнопок удаления
+            updateRemoveAnswerButtons(question);
+        }
+    });
+
+    // Удаление ответа
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-answer')) {
+            const answer = e.target.closest('.answer');
+            const answersContainer = answer.parentElement;
+            const answers = answersContainer.querySelectorAll('.answer');
+
+            if (answers.length > 2) {
+                answer.remove();
+
+                // Обновляем индексы оставшихся ответов
+                updateAnswerIndexes(answersContainer);
+
+                // Обновляем состояние кнопок удаления
+                updateRemoveAnswerButtons(answersContainer.closest('.question'));
+            } else {
+                alert('Минимальное количество ответов на вопрос - 2!');
+            }
+        }
+    });
+
+    // Функция для обновления индексов ответов
+    function updateAnswerIndexes(answersContainer) {
+        const questionId = answersContainer.closest('.question').id.split('_')[1];
+
+        answersContainer.querySelectorAll('.answer').forEach((a, index) => {
+            a.id = `question_${questionId}_answer_${index}`;
+
+            const input = a.querySelector('input[type="text"]');
+            input.name = `question_${questionId}_answer_${index}_name`;
+
+            const radio = a.querySelector('input[type="radio"]');
+            radio.name = `question_${questionId}_correct`;
+            radio.value = index;
+        });
+    }
+
+    // Функция для обновления состояния кнопок удаления ответов
+    function updateRemoveAnswerButtons(question) {
+        const answers = question.querySelectorAll('.answer');
+        const removeButtons = question.querySelectorAll('.remove-answer');
+
+        if (answers.length <= 2) {
+            removeButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('disabled');
+            });
+        } else {
+            removeButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('disabled');
+            });
+        }
+    }
+
+    // Обработка отправки формы
+    document.getElementById('testForm').addEventListener('submit', function(e) {
+        // Проверяем, что все поля заполнены
+        let isValid = true;
+
+        // Проверяем название теста
+        if (!document.getElementById('id_name').value.trim()) {
+            isValid = false;
+            alert('Пожалуйста, введите название теста');
+            return false;
+        }
+
+        // Проверяем вопросы
+        document.querySelectorAll('.question').forEach(question => {
+            const questionInput = question.querySelector('input[type="text"][name$="_name"]');
+            if (!questionInput.value.trim()) {
+                isValid = false;
+                alert('Пожалуйста, заполните все вопросы');
+                return false;
+            }
+
+            // Проверяем ответы
+            question.querySelectorAll('.answer input[type="text"]').forEach(answerInput => {
+                if (!answerInput.value.trim()) {
+                    isValid = false;
+                    alert('Пожалуйста, заполните все ответы');
+                    return false;
+                }
+            });
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Преобразуем radio в correctness для каждого ответа
+        document.querySelectorAll('.question').forEach(question => {
+            const questionId = question.id.split('_')[1];
+            const correctAnswerIndex = question.querySelector(`input[name="question_${questionId}_correct"]:checked`).value;
+
+            question.querySelectorAll('.answer').forEach((answer, index) => {
+                const answerId = answer.id.split('_')[3];
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `question_${questionId}_answer_${answerId}_correctness`;
+                hiddenInput.value = index === parseInt(correctAnswerIndex) ? 'on' : '';
+                answer.appendChild(hiddenInput);
+            });
+        });
+
+        return true;
+    });
+});
+</script>
+
+<style>
+    .remove-answer.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    .answer {
+        position: relative;
+    }
+    .d-flex.justify-content-between {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
