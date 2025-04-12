@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b5e9ecf-0c6d-4a77-bebf-f7adbf4938fc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/cobra_project_site/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/cobra_project_site/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cobra_project_site/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/cobra_project_site/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
