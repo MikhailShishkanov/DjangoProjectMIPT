@@ -1,0 +1,39 @@
+{% extends "base_page.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mt-5">Добро пожаловать, {{ user.username }}!</h1>
+
+  <div class="mt-4">
+      <h3>Ваши тесты:</h3>
+      <div class="list-group mt-3">
+        {% for test in tests %}
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1">{{ test.name }}</h5>
+            </div>
+            <div>
+              <a href="{% url 'test' test.id %}" class="btn btn-sm btn-outline-primary me-2">
+                Пройти
+              </a>
+              <form action="{% url 'test_delete' test.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                  Удалить
+                </button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  <div class="fixed-bottom mb-4 me-4 text-end">
+    <a href="{% url 'test_compiling' %}" class="btn btn-primary btn-lg">
+      ДОБАВИТЬ ТЕСТ
+    </a>
+  </div>
+</div>
+{% endblock %}
