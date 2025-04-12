@@ -1,0 +1,43 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<div class="container login-container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card-body login-form">
+          <h2 class="login-title">Вход</h2>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary full-width-btn">Войти</button>
+          </form>
+          <p class="login-footer">Нет аккаунта? <a href="{% url 'register' %}">Регистрация</a></p>
+        </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .login-container {
+    width: 800px;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .login-title {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .login-form {
+    padding: 2rem;
+  }
+  .login-footer {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .full-width-btn {
+    width: 100%;
+  }
+</style>
+{% endblock %}
