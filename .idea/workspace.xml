@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b5e9ecf-0c6d-4a77-bebf-f7adbf4938fc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/cobra_project_site/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/cobra_project_site/settings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cobra_project_app/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
